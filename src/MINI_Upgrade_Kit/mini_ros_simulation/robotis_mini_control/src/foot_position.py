@@ -78,10 +78,11 @@ def sine_wave_input():
     global freq_n
     global amplitude
     global PI
+    
     wave_signal = []
     
     for i in range((end_time-start_time)/control_period_):
-        y = amplitude*math.sin(2*PI*f*control_period_*i) 
+        y = amplitude*math.sin(2*PI*freq_n*control_period_*i) 
         wave_signal.append(y)
     return wave_signal
 
@@ -96,7 +97,18 @@ def triangle_wave_input():
     global freq_n
     global amplitude
 
-    pass
+    wave_signal = []
+    
+    for i in range((end_time-start_time)/control_period_):
+        t = (2*PI*freq_n*control_period_*i) % (2*PI)
+        if t <= PI/2 :
+            y = amplitude*t/(PI/2)
+        elif t >= 3*PI/2 :
+            y = amplitude*(t-2*PI)/(PI/2)
+        else:
+            y = amplitude - amplitude*(t-PI/2)/(PI/2)
+        wave_signal.append(y)
+    return wave_signal
 
 def execute_variable_foot_position(robot, z_foot_pos):
     global control_period_
@@ -126,10 +138,6 @@ def execute_variable_foot_position(robot, z_foot_pos):
     
     # joint_pos_values = joint_values_right_hand + joint_values_left_hand \
     #                     + joint_values_right_foot + joint_values_left_foot
-    
-
-    
-    
     
     for i in range(len(wave_signal)):  
         """

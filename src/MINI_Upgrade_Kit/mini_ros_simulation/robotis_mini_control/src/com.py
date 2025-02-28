@@ -69,16 +69,15 @@ class MINI_CoM:
         for link in self.link_info.keys():
             trans = self.tfBuffer.lookup_transform(self.base_link_frame, link, rospy.Time())
             point = self.link_info[link]['origin']['xyz']
-            tf_point = tf_geo.do_transform_point(transform, point)
-            mx = mx + tf_point.point.x*self.link_info[link]['mass']
-            my = my + tf_point.point.y*self.link_info[link]['mass']
-            mz = mz + tf_point.point.z*self.link_info[link]['mass']
+            tf_point = tf_geo.do_transform_point(trans, point)
+            mass = self.link_info[link]['mass']
+            mx = mx + tf_point.point.x*mass
+            my = my + tf_point.point.y*mass
+            mz = mz + tf_point.point.z*mass
 
         self.md_array[0] = mx
         self.md_array[1] = my
         self.md_array[2] = mz
-
-        return md_array
 
     def calculate_CoM(self):
         """
@@ -93,7 +92,6 @@ class MINI_CoM:
         for link in self.link_info.keys():
             total_mass = total_mass + self.link_info[link]['mass']
 
-        md_array = self.transform_CoM()
         self.com_x = self.md_array[0]/total_mass
         self.com_y = self.md_array[1]/total_mass
         self.com_z = self.md_array[2]/total_mass
