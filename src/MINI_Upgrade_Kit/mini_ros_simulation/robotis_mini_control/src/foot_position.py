@@ -16,7 +16,7 @@ start_time = 0 # sec
 end_time = 30 # sec
 control_period_ = 0.001 # s
 freq_n = 0.25 # hz
-amplitude = 30 # mm
+amplitude = 50 # mm
 
 PI = math.pi
 
@@ -45,6 +45,7 @@ def callback(config, level):
     return config
 
 def execute_static_foot_position(robot, x_foot_pos, y_foot_pos, z_foot_pos, time):
+
     joint_values_right_hand = [0, 0, 0]
     joint_values_left_hand = [0, 0, 0]
     joint_values_right_foot = robot.ik_right_foot(robot.x_RF0+x_foot_pos, robot.y_RF0+y_foot_pos, z_foot_pos, robot.roll_RF0, robot.pitch_RF0)
@@ -66,6 +67,13 @@ def execute_static_foot_position(robot, x_foot_pos, y_foot_pos, z_foot_pos, time
 
     robot.execute_pub.publish(traj_msg)
     rospy.sleep(time)
+    
+    for i in range(len(joint_values_left_foot)):
+        joint_values_left_foot[i] = joint_values_left_foot[i]/PI*180
+    for i in range(len(joint_values_right_foot)):
+        joint_values_right_foot[i] = joint_values_right_foot[i]/PI*180
+    print(joint_values_left_foot)
+    print(joint_values_right_foot)
 
 def sine_wave_input():
     """
@@ -186,5 +194,6 @@ if __name__ == '__main__':
 
     # Uncomment below to test variable foot position
     # execute_variable_foot_position(robot, z_foot_pos= -166)
-    
+    execute_static_foot_position(robot,x_foot_pos=-45,y_foot_pos=0,z_foot_pos=-166,time=5)
+    # x = +15 -45 y = +-50
     rospy.spin()
