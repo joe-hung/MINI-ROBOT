@@ -16,7 +16,7 @@ class MINI_CoM:
         tf2_ros.TransformListener(self.tfBuffer)
         self.init_link_inertial_info()
         self.init_marker()
-   
+        
         self.md_array = [0,0,0]
     
     def init_link_inertial_info(self):
@@ -68,8 +68,13 @@ class MINI_CoM:
 
         for link in self.link_info.keys():
             trans = self.tfBuffer.lookup_transform(self.base_link_frame, link, rospy.Time())
-            point = self.link_info[link]['origin']['xyz']
-            tf_point = tf_geo.do_transform_point(trans, point)
+            xyz = self.link_info[link]['origin']['xyz']
+            # print(point)
+            point = geometry_msgs.msg.PointStamped()
+            point.header.frame_id = link
+            point.point.x, point.point.y, point.point.z = xyz
+            
+            tf_point = tf_geo.do_transform_point(point, trans)
             mass = self.link_info[link]['mass']
             mx = mx + tf_point.point.x*mass
             my = my + tf_point.point.y*mass
@@ -104,7 +109,7 @@ class MINI_CoM:
         self.marker.pose.position.y = self.com_y
         self.marker.pose.position.z = self.com_z
         self.marker_pub.publish(self.marker)
-             
+        
 if __name__ == '__main__':
     mini_com = MINI_CoM()
     rate = rospy.Rate(100)

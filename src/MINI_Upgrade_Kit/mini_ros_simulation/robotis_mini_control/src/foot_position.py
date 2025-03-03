@@ -14,13 +14,13 @@ TODO: Find amplitude values for Q1.2 and Q1.3
 """
 start_time = 0 # sec
 end_time = 30 # sec
-control_period_ = 0.001 # ms
+control_period_ = 0.001 # s
 freq_n = 0.25 # hz
 amplitude = 30 # mm
 
 PI = math.pi
 
-signal_type_ = 'sine' # sine or triangle
+signal_type_ = 'tri' #'sine' # sine or triangle
 
 def callback(config, level):
     """
@@ -81,7 +81,9 @@ def sine_wave_input():
     
     wave_signal = []
     
-    for i in range((end_time-start_time)/control_period_):
+    # print(int((end_time-start_time)/control_period_))
+    
+    for i in range(int((end_time-start_time)/control_period_)):
         y = amplitude*math.sin(2*PI*freq_n*control_period_*i) 
         wave_signal.append(y)
     return wave_signal
@@ -99,7 +101,10 @@ def triangle_wave_input():
 
     wave_signal = []
     
-    for i in range((end_time-start_time)/control_period_):
+    # print(int((end_time-start_time)/control_period_))
+
+
+    for i in range(int((end_time-start_time)/control_period_)):
         t = (2*PI*freq_n*control_period_*i) % (2*PI)
         if t <= PI/2 :
             y = amplitude*t/(PI/2)
@@ -128,6 +133,7 @@ def execute_variable_foot_position(robot, z_foot_pos):
 
     traj_msg = JointTrajectory()
     traj_msg.header.stamp = rospy.Time.now()
+    traj_msg.header.stamp += rospy.Duration(5)
     traj_msg.joint_names = ['r_shoulder_joint','r_biceps_joint', 'r_elbow_joint', 
                             'l_shoulder_joint','l_biceps_joint', 'l_elbow_joint', 
                             'r_hip_joint', 'r_thigh_joint', 'r_knee_joint', 'r_ankle_joint', 'r_foot_joint',
