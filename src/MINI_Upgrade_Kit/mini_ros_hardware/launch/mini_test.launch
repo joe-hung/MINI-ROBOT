@@ -1,0 +1,15 @@
+<launch>
+    <rosparam file="$(find mini_ros)/config/missionPlan.yaml">
+    </rosparam>
+
+    <arg name="model" default="$(find robotis_mini_description)/urdf/robotis_mini.urdf"/>
+
+    <!-- define the robot_description parameter as the output of the xacro deparser on the urdf model of the robot-->
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+    <!-- sets and launches the controllers for robotis mini -->
+    <include file="$(find robotis_mini_control)/launch/control.launch" />
+
+    <!-- <node name="movement" pkg="mini_ros" type="ball_chasing_node" respawn="false" output="screen"/> -->
+    <node name="camera" pkg="mini_ros" type="camera.py" respawn="false" output="screen"/>
+</launch>
